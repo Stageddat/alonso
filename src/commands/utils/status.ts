@@ -1,13 +1,22 @@
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { CommandInteraction, EmbedBuilder, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { env } from '../../lib/env.js';
 import os from 'os';
 import process from 'process';
+import { superUsers } from '@/config/superUsers.js';
+import { notAllowedEmbed } from '@/views/generalEmbeds.js';
 
 const statusCommand = {
 	data: new SlashCommandBuilder()
 		.setName('status')
 		.setDescription('See detailed server & bot status'),
 	async execute(interaction: CommandInteraction) {
+		if (!superUsers.includes(interaction.user.id)) {
+			return interaction.reply({
+				embeds: [notAllowedEmbed],
+				flags: MessageFlags.Ephemeral,
+				withResponse: true,
+			});
+		}
 		const apiLatency = interaction.client.ws.ping;
 
 		const startTime = Date.now();
