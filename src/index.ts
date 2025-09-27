@@ -4,6 +4,7 @@ import { handleInteraction } from './handlers/handleInteractions.js';
 import { env } from './lib/env.js';
 import { loadEvents } from './handlers/handleEvents.js';
 import { Logger } from './lib/logger.js';
+import { statusQuotes } from './config/statusQuotes.js';
 
 const client = new CustomClient();
 
@@ -15,7 +16,17 @@ client.once(Events.ClientReady, () => {
 	Logger.info(`${client.user?.tag} está listo para conseguir la 33`);
 
 	if (client.user) {
-		client.user.setActivity('La 33 llegará', { type: 4 });
+		client.user.setActivity(statusQuotes[Math.floor(Math.random() * statusQuotes.length)], {
+			type: 4,
+		});
+
+		setInterval(
+			() => {
+				const randomIndex = Math.floor(Math.random() * statusQuotes.length);
+				client.user?.setActivity(statusQuotes[randomIndex], { type: 4 });
+			},
+			15 * 60 * 1000,
+		);
 	}
 });
 
