@@ -1,7 +1,9 @@
 import pingCommand from './utils/ping.js';
-import helpCommand from './support/help.js';
+import helpCommand from './support/ayuda.js';
+import statusCommand from './utils/status.js';
 
 export const commands = {
 	ping: pingCommand,
-	help: helpCommand,
+	ayuda: helpCommand,
+	status: statusCommand,
 };

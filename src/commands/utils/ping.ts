@@ -1,11 +1,7 @@
-import {
-	CommandInteraction,
-	EmbedBuilder,
-	SlashCommandBuilder,
-} from 'discord.js';
+import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
 const pingCommand = {
-	data: new SlashCommandBuilder().setName('ping').setDescription('ping me :3!'),
+	data: new SlashCommandBuilder().setName('ping').setDescription('¡ping pong!'),
 	async execute(interaction: CommandInteraction) {
 		const apiLatency = interaction.client.ws.ping;
 
@@ -15,10 +11,8 @@ const pingCommand = {
 		const botLatency = Date.now() - startTime;
 		const pingEmbed = new EmbedBuilder()
 			.setColor(0x0099ff)
-			.setTitle('ping latency')
-			.setDescription(
-				`bot latency: ${botLatency}ms\napi latency: ${apiLatency}ms`,
-			);
+			.setTitle('latencia')
+			.setDescription(`latencia del bot: ${botLatency}ms\nlatencia de la api: ${apiLatency}ms`);
 
 		await interaction.editReply({ content: 'poong!', embeds: [pingEmbed] });
 	},
