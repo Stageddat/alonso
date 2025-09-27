@@ -1,0 +1,38 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"strict": true,
+		"moduleResolution": "Bundler",
+		"importHelpers": true,
+		"experimentalDecorators": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"forceConsistentCasingInFileNames": true,
+		"removeComments": true,
+		"rootDir": ".",
+		"typeRoots": [
+			"node_modules/@types"
+		],
+		"sourceMap": false,
+		"outDir": "./dist",
+		"baseUrl": "./",
+		"paths": {
+			"@/*": [
+				"src/*"
+			]
+		}
+	},
+	"include": [
+		"./**/*.ts",
+		"./config/**/*.ts",
+		"./config/**/*.json",
+		"eslint.config.mjs"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
+}
