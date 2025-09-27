@@ -14,5 +14,5 @@ export const errorEmbed = new EmbedBuilder()
 
 export const notAllowedEmbed = new EmbedBuilder()
 	.setColor(0xff0000)
-	.setTitle('¡No eres suficiente sigma!🗿')
-	.setDescription('No eres lo suficientemente sigma para usar esto.');
+	.setTitle('¡Tu nivel de sigma es muy bajo!🗿')
+	.setDescription('No eres lo suficientemente sigma para esto.');
