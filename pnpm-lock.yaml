@@ -26,6 +26,9 @@ importers:
       picocolors:
         specifier: 1.1.1
         version: 1.1.1
+      pocketbase:
+        specifier: 0.26.2
+        version: 0.26.2
       postgres:
         specifier: 3.4.7
         version: 3.4.7
@@ -1296,6 +1299,9 @@ packages:
   plimit-lit@1.6.1:
     resolution: {integrity: sha512-B7+VDyb8Tl6oMJT9oSO2CW8XC/T4UcJGrwOVoNGwOQsQYhlpfajmrMj5xeejqaASq3V/EqThyOeATEOMuSEXiA==}
     engines: {node: '>=12'}
+
+  pocketbase@0.26.2:
+    resolution: {integrity: sha512-WA8EOBc3QnSJh8rJ3iYoi9DmmPOMFIgVfAmIGux7wwruUEIzXgvrO4u0W2htfQjGIcyezJkdZOy5Xmh7SxAftw==}
 
   postcss-load-config@4.0.2:
     resolution: {integrity: sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==}
@@ -2698,6 +2704,8 @@ snapshots:
   plimit-lit@1.6.1:
     dependencies:
       queue-lit: 1.5.2
+
+  pocketbase@0.26.2: {}
 
   postcss-load-config@4.0.2(ts-node@10.9.2(@types/node@20.17.24)(typescript@5.8.2)):
     dependencies:
