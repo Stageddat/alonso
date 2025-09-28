@@ -8,6 +8,7 @@ const envSchema = z.object({
 	DISCORD_TOKEN: z.string().min(1, 'DISCORD_TOKEN is required'),
 	DISCORD_APP_ID: z.string().min(1, 'DISCORD_APP_ID is required'),
 	DISCORD_GUILD_ID: z.string().min(1, 'DISCORD_GUILD_ID is required'),
+	DB_TOKEN: z.string().min(1, 'DB_TOKEN is required'),
 	DEBUG: z.string().transform((val) => {
 		const lower = val.toLowerCase();
 		return lower === 'true' || lower === '1';
