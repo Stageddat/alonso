@@ -42,7 +42,7 @@ export class ItemModel {
 				return itemStatus.newItemRegistered;
 			}
 
-			const normalizedCurrent = ItemModel.normalizeItem(currentItem as DbStoredItem);
+			const normalizedCurrent = ItemModel.normalizeItem(currentItem);
 			const normalizedNew = ItemModel.normalizeItem(item);
 
 			// console.log('Current item (normalized):', normalizedCurrent);
@@ -67,7 +67,9 @@ export class ItemModel {
 	static async getItemByID({ id }: { id: string }) {
 		try {
 			const item = await pb.collection('dam_items').getOne(id);
-			return item;
+			Logger.debug(`Item fetched: ${item.id}`);
+			Logger.debug(item);
+			return item as DbStoredItem;
 		} catch (error: unknown) {
 			console.error(error);
 			if (error instanceof ClientResponseError) {
@@ -75,9 +77,19 @@ export class ItemModel {
 					return errorStatus.dataNotFound;
 				}
 				Logger.error(error.originalError);
+				return errorStatus.databaseFailed;
 			}
 			Logger.error('Database error:', error);
-			Logger.error('Database error:', error);
+			return errorStatus.databaseFailed;
+		}
+	}
+
+	static async setItemDayMsgID({ id, dayMsgID }: { id: string; dayMsgID: string }) {
+		try {
+			const item = await pb.collection('dam_items').update(id, { due_today_msg_id: dayMsgID });
+			return item;
+		} catch (error) {
+			Logger.error(error);
 			return errorStatus.databaseFailed;
 		}
 	}
