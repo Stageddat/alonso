@@ -6,4 +6,5 @@ export enum itemStatus {
 	newItemRegistered = 'New item registered in the database',
 	itemUpdated = 'Item updated in the database',
 	itemIsEqual = 'Item is equal to the database',
+	itemSavedBdErrorFirstSync = 'Item saved in the database but expected to fail on first sync',
 }
