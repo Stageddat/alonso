@@ -7,6 +7,9 @@ import { ItemModel } from '@/models/itemModel';
 import { DbItem } from '@/types/dbItem';
 import { itemStatus } from '@/enum/itemStatus';
 import { errorStatus } from '@/enum/errorStatus';
+import { todayItemEmbed } from '@/views/todayItemEmbeds';
+import { TextChannel } from 'discord.js';
+import { client } from '@/index';
 
 const n8nApiEvent = {
 	name: Events.MessageCreate,
@@ -20,7 +23,11 @@ const n8nApiEvent = {
 		}
 
 		// Limpiar el texto
-		const clearText = message.content.replace(/^```|```$/g, '');
+		const clearText = message.content
+			.replace(/```(?:json)?/gi, '')
+			.replace(/```$/g, '')
+			.trim();
+		console.log(clearText);
 
 		// Sacar la información necesaria
 		try {
@@ -85,6 +92,13 @@ const n8nApiEvent = {
 				case itemStatus.itemIsEqual: {
 					if (!itsSameDay) return;
 					Logger.debug('The item ' + item.name + ' is the same day as today');
+
+					const dailyEmbed = todayItemEmbed(dbItem);
+					await (client.channels.cache.get('1421809186395914330') as TextChannel).send({
+						content: `@everyone`,
+						embeds: [dailyEmbed],
+					});
+
 					break;
 				}
 				case itemStatus.itemUpdated: {
@@ -94,6 +108,7 @@ const n8nApiEvent = {
 				}
 			}
 		} catch (error) {
+			console.log(error);
 			Logger.error('Error parsing JSON from message:', error);
 		}
 	},
