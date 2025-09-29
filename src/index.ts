@@ -6,7 +6,7 @@ import { loadEvents } from './handlers/handleEvents.js';
 import { Logger } from './lib/logger.js';
 import { statusQuotes } from './config/statusQuotes.js';
 
-const client = new CustomClient();
+export const client = new CustomClient();
 
 client.on(Events.InteractionCreate, (interaction) => {
 	void handleInteraction(interaction);
