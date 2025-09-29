@@ -14,7 +14,10 @@ const testCommand = {
 			});
 		}
 
-		const item = await ItemModel.getItemByID({ id: 'iwrfhqtk2577a9' });
+		// const item = await ItemModel.getItemByID({ id: 'iwrfhqtk2577a9' });
+		// return interaction.reply({ content: `\`\`\`json\n${JSON.stringify(item, null, 2)}\n\`\`\`` });
+
+		const item = await ItemModel.getTodayItems();
 		return interaction.reply({ content: `\`\`\`json\n${JSON.stringify(item, null, 2)}\n\`\`\`` });
 	},
 };
