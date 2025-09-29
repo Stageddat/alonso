@@ -5,6 +5,7 @@ import { errorStatus } from '@/enum/errorStatus';
 import { DbItem } from '@/types/dbItem';
 import equal from 'fast-deep-equal';
 import { itemStatus } from '@/enum/itemStatus';
+import { DateTime } from 'luxon';
 
 type DbStoredItem = DbItem & {
 	collectionId?: string;
@@ -33,12 +34,12 @@ export class ItemModel {
 
 	static async addModifyItem({ item }: { item: DbItem }) {
 		try {
-			const currentItem = await ItemModel.getItemByID({ id: item.id });
+			const currentItem = await ItemModel.getItemByID({ id: item.id.trim() });
 			if (currentItem === errorStatus.databaseFailed) return errorStatus.databaseFailed;
 
-			if (currentItem === errorStatus.dataNotFound) {
+			if (currentItem === itemStatus.itemSavedBdErrorFirstSync) {
 				const newItem = await pb.collection('dam_items').create(item);
-				Logger.info(`New item registered: ${newItem.id}`);
+				Logger.info(`New item registered because it was not found: ${newItem.id}`);
 				return itemStatus.newItemRegistered;
 			}
 
@@ -55,28 +56,29 @@ export class ItemModel {
 				return itemStatus.itemIsEqual;
 			}
 
-			const updatedItem = await pb.collection('dam_items').update(item.id, item);
+			const updatedItem = await pb.collection('dam_items').update<DbStoredItem>(item.id, item);
 			Logger.info(`Item updated: ${updatedItem.id}`);
 			return itemStatus.itemUpdated;
 		} catch (error) {
-			Logger.error(error);
+			Logger.error('Failed to update or create item:', error);
 			return errorStatus.databaseFailed;
 		}
 	}
 
 	static async getItemByID({ id }: { id: string }) {
 		try {
-			const item = await pb.collection('dam_items').getOne(id);
+			const item = await pb.collection('dam_items').getOne<DbStoredItem>(id);
 			Logger.debug(`Item fetched: ${item.id}`);
 			Logger.debug(item);
-			return item as DbStoredItem;
+			return item;
 		} catch (error: unknown) {
-			console.error(error);
 			if (error instanceof ClientResponseError) {
 				if (error.status === 404) {
-					return errorStatus.dataNotFound;
+					Logger.debug('Item not found (expected on first sync):', id);
+					return itemStatus.itemSavedBdErrorFirstSync;
 				}
-				Logger.error(error.originalError);
+				Logger.error('ERROR GETTING ITEM:', error.originalError);
+				Logger.error('ERROR GETTING ITEM:', error);
 				return errorStatus.databaseFailed;
 			}
 			Logger.error('Database error:', error);
@@ -89,7 +91,29 @@ export class ItemModel {
 			const item = await pb.collection('dam_items').update(id, { due_today_msg_id: dayMsgID });
 			return item;
 		} catch (error) {
-			Logger.error(error);
+			Logger.error("Failed to update item's day message ID:", error);
+			return errorStatus.databaseFailed;
+		}
+	}
+
+	static async getTodayItems() {
+		try {
+			const todayDate = DateTime.now().toUTC().toFormat('yyyy-MM-dd');
+			const start = DateTime.fromISO(todayDate, { zone: 'Europe/Madrid' }).startOf('day');
+			const end = start.endOf('day');
+
+			const startUTC = start.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
+			const endUTC = end.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
+
+			const filter = `due_date >= "${startUTC}" && due_date <= "${endUTC}"`;
+
+			const itemList = await pb.collection('dam_items').getList<DbStoredItem>(1, 50, {
+				filter,
+				sort: 'due_date',
+			});
+			return itemList.items;
+		} catch (error) {
+			Logger.error("Failed to get today's items:", error);
 			return errorStatus.databaseFailed;
 		}
 	}
