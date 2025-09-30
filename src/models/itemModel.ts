@@ -74,7 +74,7 @@ export class ItemModel {
 		} catch (error: unknown) {
 			if (error instanceof ClientResponseError) {
 				if (error.status === 404) {
-					Logger.debug('Item not found (expected on first sync):', id);
+					Logger.debug('Item not found (expected on first search):', id);
 					return itemStatus.itemSavedBdErrorFirstSync;
 				}
 				Logger.error('ERROR GETTING ITEM:', error.originalError);
@@ -98,7 +98,7 @@ export class ItemModel {
 
 	static async getTodayItems() {
 		try {
-			const todayDate = DateTime.now().toUTC().toFormat('yyyy-MM-dd');
+			const todayDate = DateTime.now().setZone('Europe/Madrid').toUTC().toFormat('yyyy-MM-dd');
 			const start = DateTime.fromISO(todayDate, { zone: 'Europe/Madrid' }).startOf('day');
 			const end = start.endOf('day');
 
