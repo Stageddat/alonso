@@ -5,12 +5,8 @@ import { Item } from '@/types/item';
 import { itemType } from '@/config/itemType';
 import { ItemModel } from '@/models/itemModel';
 import { DbItem } from '@/types/dbItem';
-import { itemStatus } from '@/enum/itemStatus';
-import { errorStatus } from '@/enum/errorStatus';
-import { todayItemEmbed } from '@/views/todayItemEmbeds';
-import { TextChannel } from 'discord.js';
-import { client } from '@/index';
 import { normalizeToUTC } from '@/utils/normalizeToUTC';
+import { updateDailyMsg } from '@/controllers/updateDailyMsg';
 
 const n8nApiEvent = {
 	name: Events.MessageCreate,
@@ -65,7 +61,9 @@ const n8nApiEvent = {
 			const prettyJSON = JSON.stringify(dbItem, null, 2);
 			await message.reply('```json\n' + prettyJSON + '\n```');
 
-			const dbStatus = await ItemModel.addModifyItem({ item: dbItem });
+			// const dbStatus = await ItemModel.addModifyItem({ item: dbItem });
+			await ItemModel.addModifyItem({ item: dbItem });
+			await updateDailyMsg.updateDayMsg();
 			// Logger.debug(`Database status: ${dbStatus}`);
 
 			// IMPLEMENTAR UN SISTEMA DE ACTUALIZACION EL MENSAJE COMPLETA?
