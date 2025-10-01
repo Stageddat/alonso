@@ -62,4 +62,36 @@ export class MsgModel {
 			return errorStatus.databaseFailed;
 		}
 	}
+
+	static async setDate({
+		id,
+		dailyMsgId,
+		weeklyMsgId,
+	}: {
+		id: string;
+		dailyMsgId?: string;
+		weeklyMsgId?: string;
+	}) {
+		try {
+			if (dailyMsgId && weeklyMsgId) {
+				await pb.collection('dam_msg').update(id, {
+					daily_msg_id: dailyMsgId,
+					weekly_msg_id: weeklyMsgId,
+				});
+			} else if (dailyMsgId) {
+				await pb.collection('dam_msg').update(id, {
+					daily_msg_id: dailyMsgId,
+				});
+			} else if (weeklyMsgId) {
+				await pb.collection('dam_msg').update(id, {
+					weekly_msg_id: weeklyMsgId,
+				});
+			}
+			Logger.debug("Day's date updated:", id);
+			return dateStatus.dateUpdated;
+		} catch (error) {
+			Logger.error('Database error:', error);
+			return errorStatus.databaseFailed;
+		}
+	}
 }
