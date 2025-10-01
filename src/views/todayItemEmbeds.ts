@@ -71,3 +71,11 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 			},
 		]);
 };
+
+export const nothingForTodayEmbed = () => {
+	return new EmbedBuilder()
+		.setColor(0xffbc00)
+		.setTitle('Parece que no hay nada...')
+		.setDescription('Es un buen dia para tomar el sol :)')
+		.setImage('https://i.ibb.co/HTvCv4Cp/images.jpg');
+};
