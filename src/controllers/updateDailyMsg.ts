@@ -10,10 +10,16 @@ import { dateStatus } from '@/enum/dateStatus';
 
 export class updateDailyMsg {
 	private static async sendDayMsg(embedList: EmbedBuilder[], todayDate: string) {
-		await (client.channels.cache.get('1421809186395914330') as TextChannel).send({
-			content: todayDate,
-			embeds: embedList,
-		});
+		try {
+			const msgData = await (client.channels.cache.get('1421809186395914330') as TextChannel).send({
+				content: todayDate,
+				embeds: embedList,
+			});
+			return msgData.id;
+		} catch (error) {
+			Logger.error('Failed to send today message:', error);
+			return dateStatus.failedToSendTodayDate;
+		}
 	}
 
 	public static async updateDayMsg() {
@@ -56,15 +62,24 @@ export class updateDailyMsg {
 		}
 
 		if (todayMsgId === dateStatus.dateNotFound) {
+			Logger.info('Date not in db, creating and sending...');
 			await MsgModel.addDate();
-			const messageData = await this.sendDayMsg(embedList, todayDate);
+			const messageId = await this.sendDayMsg(embedList, todayDate);
+			await MsgModel.setDate({
+				id: todayDate,
+				dailyMsgId: messageId,
+			});
 			return;
 		}
 
 		if (todayMsgId.daily_msg_id === '') {
 			// Mensaje no enviado! Hay que enviar el mensaje!
-			const messageData = await this.sendDayMsg(embedList, todayDate);
-			Logger.info("Today's message not sent.");
+			Logger.info("Today's message not sent. Sending...");
+			const messageId = await this.sendDayMsg(embedList, todayDate);
+			await MsgModel.setDate({
+				id: todayDate,
+				dailyMsgId: messageId,
+			});
 			return;
 		}
 
