@@ -10,6 +10,7 @@ import { errorStatus } from '@/enum/errorStatus';
 import { todayItemEmbed } from '@/views/todayItemEmbeds';
 import { TextChannel } from 'discord.js';
 import { client } from '@/index';
+import { normalizeToUTC } from '@/utils/normalizeToUTC';
 
 const n8nApiEvent = {
 	name: Events.MessageCreate,
@@ -32,8 +33,6 @@ const n8nApiEvent = {
 		// Sacar la información necesaria
 		try {
 			const item: Item = JSON.parse(clearText) as Item;
-			const prettyJSON = JSON.stringify(item, null, 2);
-			await message.reply('```json\n' + prettyJSON + '\n```');
 
 			// Logger.debug(`ITEM DATA:`);
 			Logger.debug(`name: ${item.name}`);
@@ -57,12 +56,15 @@ const n8nApiEvent = {
 				moodle_link: item.property_url,
 				notion_link: item.url,
 				users_completed: undefined,
-				due_date: item.property_fecha_l_mite.start,
+				due_date: normalizeToUTC(item.property_fecha_l_mite.start),
 				item_type: type.name,
 				course: course.name,
 			};
 
 			// Añadir o modificar
+			const prettyJSON = JSON.stringify(dbItem, null, 2);
+			await message.reply('```json\n' + prettyJSON + '\n```');
+
 			const dbStatus = await ItemModel.addModifyItem({ item: dbItem });
 			// Logger.debug(`Database status: ${dbStatus}`);
 
