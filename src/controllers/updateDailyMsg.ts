@@ -12,7 +12,7 @@ export class updateDailyMsg {
 	private static async sendDayMsg(embedList: EmbedBuilder[], todayDate: string) {
 		try {
 			const msgData = await (client.channels.cache.get('1421809186395914330') as TextChannel).send({
-				content: todayDate,
+				content: `# ${todayDate}`,
 				embeds: embedList,
 			});
 			return msgData.id;
