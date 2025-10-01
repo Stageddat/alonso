@@ -96,14 +96,16 @@ export class ItemModel {
 		}
 	}
 
+	// Conseguir los items de tanto que se acaba hoy como los que se acaban mañana!
 	static async getTodayItems() {
 		try {
 			const todayDate = DateTime.now().setZone('Europe/Madrid').toUTC().toFormat('yyyy-MM-dd');
 			const start = DateTime.fromISO(todayDate, { zone: 'Europe/Madrid' }).startOf('day');
-			const end = start.endOf('day');
+			// const endToday = start.endOf('day');
+			const endTomorrow = start.plus({ days: 1 }).endOf('day');
 
 			const startUTC = start.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
-			const endUTC = end.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
+			const endUTC = endTomorrow.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
 
 			const filter = `due_date >= "${startUTC}" && due_date <= "${endUTC}"`;
 
