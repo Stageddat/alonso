@@ -2,7 +2,7 @@ import { errorStatus } from '@/enum/errorStatus';
 import { Logger } from '@/lib/logger';
 import { ItemModel } from '@/models/itemModel';
 import { MsgModel } from '@/models/msgModel';
-import { todayItemEmbed } from '@/views/todayItemEmbeds';
+import { nothingForTodayEmbed, todayItemEmbed } from '@/views/todayItemEmbeds';
 import { client } from '@/index';
 import { EmbedBuilder, TextChannel } from 'discord.js';
 import { DateTime } from 'luxon';
@@ -41,6 +41,10 @@ export class updateDailyMsg {
 			embedList.push(itemEmbed);
 		}
 
+		// añadir embed de chilling en caso que no hay nada
+		if (embedList.length === 0) {
+			embedList.push(nothingForTodayEmbed());
+		}
 		// mirar si existe mensaje de hoy
 		const todayMsgId = await MsgModel.getMsgIds();
 
@@ -53,13 +57,13 @@ export class updateDailyMsg {
 
 		if (todayMsgId === dateStatus.dateNotFound) {
 			await MsgModel.addDate();
-			await this.sendDayMsg(embedList, todayDate);
+			const messageData = await this.sendDayMsg(embedList, todayDate);
 			return;
 		}
 
 		if (todayMsgId.daily_msg_id === '') {
 			// Mensaje no enviado! Hay que enviar el mensaje!
-			await this.sendDayMsg(embedList, todayDate);
+			const messageData = await this.sendDayMsg(embedList, todayDate);
 			Logger.info("Today's message not sent.");
 			return;
 		}
