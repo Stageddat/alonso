@@ -6,6 +6,7 @@ import { DbItem } from '@/types/dbItem';
 import equal from 'fast-deep-equal';
 import { itemStatus } from '@/enum/itemStatus';
 import { DateTime } from 'luxon';
+import { normalizeToUTC } from '@/utils/normalizeToUTC';
 
 type DbStoredItem = DbItem & {
 	collectionId?: string;
@@ -19,14 +20,13 @@ type DbStoredItem = DbItem & {
 
 export class ItemModel {
 	private static normalizeItem(item: DbStoredItem | DbItem): DbItem {
-		const normalizedDueDate = item.due_date ? new Date(item.due_date).toISOString() : '';
 		return {
 			id: item.id,
 			title: item.title,
 			moodle_link: item.moodle_link,
 			notion_link: item.notion_link,
 			users_completed: item.users_completed ?? undefined,
-			due_date: normalizedDueDate,
+			due_date: normalizeToUTC(item.due_date),
 			item_type: item.item_type,
 			course: item.course,
 		};
