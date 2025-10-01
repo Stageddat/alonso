@@ -1,4 +1,5 @@
 import { itemTypeColor } from '@/enum/itemTypeColor';
+import { Logger } from '@/lib/logger';
 import { DbItem } from '@/types/dbItem';
 import { EmbedBuilder } from 'discord.js';
 
@@ -10,17 +11,27 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 	let unixTimestamp: number | null = null;
 
 	if (dbItem.due_date) {
-		// Convertir fecha con hora a timestamp
-		let date = new Date(dbItem.due_date);
+		Logger.debug('The item ', dbItem.title, ' due date is ', dbItem.due_date);
 
-		// Añadir hora a la fecha si no hay de 23:59
-		if (!dbItem.due_date.includes('T')) {
-			const dateOnly = new Date(dbItem.due_date + 'T23:59:00+02:00');
-			date = dateOnly;
+		let date: Date;
+
+		// Detectar si el string es solo YYYY-MM-DD (sin hora)
+		if (/^\d{4}-\d{2}-\d{2}$/.test(dbItem.due_date)) {
+			// Añadir hora 23:59 y zona horaria +02:00
+			date = new Date(dbItem.due_date + 'T23:59:00+02:00');
+		} else {
+			// Intentar parsear directamente
+			date = new Date(dbItem.due_date);
 		}
 
-		// Convertir a timestamp
-		unixTimestamp = Math.floor(date.getTime() / 1000);
+		// Validar que sea una fecha válida
+		if (!isNaN(date.getTime())) {
+			unixTimestamp = Math.floor(date.getTime() / 1000);
+		} else {
+			Logger.debug('Fecha inválida para el item ', dbItem.title);
+		}
+
+		Logger.debug('The item ', dbItem.title, ' due date unix timestamp is ', unixTimestamp);
 	}
 
 	return new EmbedBuilder()
