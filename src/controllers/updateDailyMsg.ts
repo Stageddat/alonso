@@ -9,10 +9,16 @@ import { DateTime } from 'luxon';
 import { dateStatus } from '@/enum/dateStatus';
 
 export class updateDailyMsg {
-	private static async sendDayMsg(embedList: EmbedBuilder[], todayDate: string) {
+	private static async sendDayMsg(embedList: EmbedBuilder[], formattedTodayDate: string) {
 		try {
+			const weekDay = DateTime.now()
+				.setZone('Europe/Madrid')
+				.toUTC()
+				.setLocale('es')
+				.toLocaleString({ weekday: 'long' });
+
 			const msgData = await (client.channels.cache.get('1421809186395914330') as TextChannel).send({
-				content: `# ${todayDate}`,
+				content: `# ${weekDay.charAt(0).toUpperCase() + weekDay.slice(1)}, ${formattedTodayDate}`,
 				embeds: embedList,
 			});
 			return msgData.id;
@@ -55,6 +61,15 @@ export class updateDailyMsg {
 		const todayMsgId = await MsgModel.getMsgIds();
 
 		const todayDate = DateTime.now().setZone('Europe/Madrid').toUTC().toFormat('yyyy-MM-dd');
+		const formattedTodayDate = DateTime.now()
+			.setZone('Europe/Madrid')
+			.toUTC()
+			.toFormat('dd/MM/yyyy');
+		const weekDay = DateTime.now()
+			.setZone('Europe/Madrid')
+			.toUTC()
+			.setLocale('es')
+			.toLocaleString({ weekday: 'long' });
 
 		if (todayMsgId === errorStatus.databaseFailed) {
 			Logger.error("Failed to get today's message ID.");
@@ -64,7 +79,7 @@ export class updateDailyMsg {
 		if (todayMsgId === dateStatus.dateNotFound) {
 			Logger.info('Date not in db, creating and sending...');
 			await MsgModel.addDate();
-			const messageId = await this.sendDayMsg(embedList, todayDate);
+			const messageId = await this.sendDayMsg(embedList, formattedTodayDate);
 			await MsgModel.setDate({
 				id: todayDate,
 				dailyMsgId: messageId,
@@ -75,7 +90,7 @@ export class updateDailyMsg {
 		if (todayMsgId.daily_msg_id === '') {
 			// Mensaje no enviado! Hay que enviar el mensaje!
 			Logger.info("Today's message not sent. Sending...");
-			const messageId = await this.sendDayMsg(embedList, todayDate);
+			const messageId = await this.sendDayMsg(embedList, formattedTodayDate);
 			await MsgModel.setDate({
 				id: todayDate,
 				dailyMsgId: messageId,
@@ -88,7 +103,7 @@ export class updateDailyMsg {
 				todayMsgId.daily_msg_id,
 			)
 		).edit({
-			content: `# ${todayDate}`,
+			content: `# ${weekDay.charAt(0).toUpperCase() + weekDay.slice(1)}, ${formattedTodayDate}`,
 			embeds: embedList,
 		});
 	}
