@@ -88,6 +88,7 @@ export class updateDailyMsg {
 				todayMsgId.daily_msg_id,
 			)
 		).edit({
+			content: `# ${todayDate}`,
 			embeds: embedList,
 		});
 	}
