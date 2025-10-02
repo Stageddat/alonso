@@ -74,8 +74,15 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 
 export const nothingForTodayEmbed = () => {
 	return new EmbedBuilder()
-		.setColor(0xffbc00)
+		.setColor(0x308446)
 		.setTitle('Parece que no hay nada...')
 		.setDescription('Es un buen dia para tomar el sol :)')
 		.setImage('https://i.ibb.co/HTvCv4Cp/images.jpg');
+};
+
+export const lastUpdatedEmbed = () => {
+	return new EmbedBuilder()
+		.setColor(0x308446)
+		.setTitle(null)
+		.setDescription(`Última actualizacion el ` + new Date().toLocaleString());
 };
