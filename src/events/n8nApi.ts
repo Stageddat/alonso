@@ -64,6 +64,7 @@ const n8nApiEvent = {
 			// const dbStatus = await ItemModel.addModifyItem({ item: dbItem });
 			await ItemModel.addModifyItem({ item: dbItem });
 			await updateDailyMsg.updateDayMsg();
+			Logger.debug('Updated item and daily message');
 			// Logger.debug(`Database status: ${dbStatus}`);
 
 			// IMPLEMENTAR UN SISTEMA DE ACTUALIZACION EL MENSAJE COMPLETA?
