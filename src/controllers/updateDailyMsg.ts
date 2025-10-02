@@ -1,8 +1,8 @@
 import { errorStatus } from '@/enum/errorStatus';
 import { Logger } from '@/lib/logger';
 import { ItemModel } from '@/models/itemModel';
-import { MsgModel } from '@/models/msgModel';
-import { nothingForTodayEmbed, todayItemEmbed } from '@/views/todayItemEmbeds';
+import { MsgIdsModel } from '@/models/msgModel';
+import { lastUpdatedEmbed, nothingForTodayEmbed, todayItemEmbed } from '@/views/todayItemEmbeds';
 import { client } from '@/index';
 import { EmbedBuilder, TextChannel } from 'discord.js';
 import { DateTime } from 'luxon';
@@ -13,7 +13,6 @@ export class updateDailyMsg {
 		try {
 			const weekDay = DateTime.now()
 				.setZone('Europe/Madrid')
-				.toUTC()
 				.setLocale('es')
 				.toLocaleString({ weekday: 'long' });
 
@@ -29,11 +28,11 @@ export class updateDailyMsg {
 	}
 
 	public static async updateDayMsg() {
+		Logger.debug("Updating today's message...");
 		// coger todo los items de hoy
 		const todayItemList = await ItemModel.getTodayItems();
-
+		Logger.debug('Today items:', todayItemList);
 		if (todayItemList === errorStatus.databaseFailed) {
-			Logger.error("Failed to get today's items.");
 			return;
 		}
 
@@ -57,17 +56,14 @@ export class updateDailyMsg {
 		if (embedList.length === 0) {
 			embedList.push(nothingForTodayEmbed());
 		}
+		embedList.push(lastUpdatedEmbed());
 		// mirar si existe mensaje de hoy
-		const todayMsgId = await MsgModel.getMsgIds();
+		const todayMsgId = await MsgIdsModel.getMsgIds();
 
-		const todayDate = DateTime.now().setZone('Europe/Madrid').toUTC().toFormat('yyyy-MM-dd');
-		const formattedTodayDate = DateTime.now()
-			.setZone('Europe/Madrid')
-			.toUTC()
-			.toFormat('dd/MM/yyyy');
+		const todayDate = DateTime.now().setZone('Europe/Madrid').toFormat('yyyy-MM-dd');
+		const formattedTodayDate = DateTime.now().setZone('Europe/Madrid').toFormat('dd/MM/yyyy');
 		const weekDay = DateTime.now()
 			.setZone('Europe/Madrid')
-			.toUTC()
 			.setLocale('es')
 			.toLocaleString({ weekday: 'long' });
 
@@ -78,9 +74,9 @@ export class updateDailyMsg {
 
 		if (todayMsgId === dateStatus.dateNotFound) {
 			Logger.info('Date not in db, creating and sending...');
-			await MsgModel.addDate();
+			await MsgIdsModel.addDate();
 			const messageId = await this.sendDayMsg(embedList, formattedTodayDate);
-			await MsgModel.setDate({
+			await MsgIdsModel.setDate({
 				id: todayDate,
 				dailyMsgId: messageId,
 			});
@@ -91,7 +87,7 @@ export class updateDailyMsg {
 			// Mensaje no enviado! Hay que enviar el mensaje!
 			Logger.info("Today's message not sent. Sending...");
 			const messageId = await this.sendDayMsg(embedList, formattedTodayDate);
-			await MsgModel.setDate({
+			await MsgIdsModel.setDate({
 				id: todayDate,
 				dailyMsgId: messageId,
 			});
