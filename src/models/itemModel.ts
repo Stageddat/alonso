@@ -97,15 +97,26 @@ export class ItemModel {
 	}
 
 	// Conseguir los items de tanto que se acaba hoy como los que se acaban mañana!
+
 	static async getTodayItems() {
 		try {
-			const todayDate = DateTime.now().setZone('Europe/Madrid').toUTC().toFormat('yyyy-MM-dd');
-			const start = DateTime.fromISO(todayDate, { zone: 'Europe/Madrid' }).startOf('day');
-			// const endToday = start.endOf('day');
-			const endTomorrow = start.plus({ days: 1 }).endOf('day');
+			// Hora actual en Madrid
+			const nowMadrid = DateTime.now().setZone('Europe/Madrid');
 
-			const startUTC = start.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
-			const endUTC = endTomorrow.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
+			// Inicio de hoy en Madrid
+			const startMadrid = nowMadrid.startOf('day');
+
+			// Fin de mañana en Madrid (2 días menos 1 segundo)
+			const endMadrid = startMadrid.plus({ days: 2 }).startOf('day').minus({ seconds: 1 });
+
+			// Convertir a UTC para la base de datos
+			const startUTC = startMadrid.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
+			const endUTC = endMadrid.toUTC().toFormat('yyyy-LL-dd HH:mm:ss');
+
+			Logger.debug('Start date Madrid:', startMadrid.toISO());
+			Logger.debug('End date Madrid:', endMadrid.toISO());
+			Logger.debug('Start UTC:', startUTC);
+			Logger.debug('End UTC:', endUTC);
 
 			const filter = `due_date >= "${startUTC}" && due_date <= "${endUTC}"`;
 
@@ -113,6 +124,7 @@ export class ItemModel {
 				filter,
 				sort: 'due_date',
 			});
+
 			return itemList.items;
 		} catch (error) {
 			Logger.error("Failed to get today's items:", error);
