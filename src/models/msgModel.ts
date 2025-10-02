@@ -15,7 +15,7 @@ type DbStoredMsg = {
 	weekly_msg_id: string;
 };
 
-export class MsgModel {
+export class MsgIdsModel {
 	static async getMsgIds() {
 		try {
 			const todayDate = DateTime.now().setZone('Europe/Madrid').toFormat('yyyy-MM-dd');
@@ -42,7 +42,7 @@ export class MsgModel {
 
 	static async addDate() {
 		try {
-			const todayDate = DateTime.now().setZone('Europe/Madrid').toUTC().toFormat('yyyy-MM-dd');
+			const todayDate = DateTime.now().setZone('Europe/Madrid').toFormat('yyyy-MM-dd');
 			Logger.debug("Today's date:", todayDate);
 			const todayMsgIds = await pb
 				.collection('dam_msg')
