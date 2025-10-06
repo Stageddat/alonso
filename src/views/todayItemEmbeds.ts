@@ -34,42 +34,115 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 		Logger.debug('The item ', dbItem.title, ' due date unix timestamp is ', unixTimestamp);
 	}
 
-	return new EmbedBuilder()
-		.setColor(color)
-		.setTitle(dbItem.title)
-		.setDescription(null)
-		.addFields([
-			{
-				name: 'Moodle URL',
-				value: `[Abrir en Moodle](${dbItem.moodle_link})`,
-				inline: true,
-			},
-			{
-				name: 'Se acaba',
-				value: unixTimestamp ? `<t:${unixTimestamp}:R>` : 'Sin fecha',
-				inline: true,
-			},
-			{
-				name: 'Fecha límite',
-				value: unixTimestamp ? `<t:${unixTimestamp}:F>` : 'No especificada',
-				inline: true,
-			},
-			{
-				name: 'Materia',
-				value: dbItem.course,
-				inline: true,
-			},
-			{
-				name: 'Tipo',
-				value: dbItem.item_type,
-				inline: true,
-			},
-			{
-				name: '\u200b',
-				value: '\u200b',
-				inline: true,
-			},
-		]);
+	if (dbItem.moodle_link) {
+		if (dbItem.moodle_link?.startsWith('https://insbaixcamp.cat')) {
+			return new EmbedBuilder()
+				.setColor(color)
+				.setTitle(dbItem.title)
+				.setDescription(null)
+				.addFields([
+					{
+						name: 'Moodle URL',
+						value: `[Abrir en Moodle](${dbItem.moodle_link})`,
+						inline: true,
+					},
+					{
+						name: 'Se acaba',
+						value: unixTimestamp ? `<t:${unixTimestamp}:R>` : 'Sin fecha',
+						inline: true,
+					},
+					{
+						name: 'Fecha límite',
+						value: unixTimestamp ? `<t:${unixTimestamp}:F>` : 'No especificada',
+						inline: true,
+					},
+					{
+						name: 'Materia',
+						value: dbItem.course,
+						inline: true,
+					},
+					{
+						name: 'Tipo',
+						value: dbItem.item_type,
+						inline: true,
+					},
+					{
+						name: '\u200b',
+						value: '\u200b',
+						inline: true,
+					},
+				]);
+		} else {
+			return new EmbedBuilder()
+				.setColor(color)
+				.setTitle(dbItem.title)
+				.setDescription(null)
+				.addFields([
+					{
+						name: 'URL',
+						value: `[Abrir](${dbItem.moodle_link})`,
+						inline: true,
+					},
+					{
+						name: 'Se acaba',
+						value: unixTimestamp ? `<t:${unixTimestamp}:R>` : 'Sin fecha',
+						inline: true,
+					},
+					{
+						name: 'Fecha límite',
+						value: unixTimestamp ? `<t:${unixTimestamp}:F>` : 'No especificada',
+						inline: true,
+					},
+					{
+						name: 'Materia',
+						value: dbItem.course,
+						inline: true,
+					},
+					{
+						name: 'Tipo',
+						value: dbItem.item_type,
+						inline: true,
+					},
+					{
+						name: '\u200b',
+						value: '\u200b',
+						inline: true,
+					},
+				]);
+		}
+	} else {
+		return new EmbedBuilder()
+			.setColor(color)
+			.setTitle(dbItem.title)
+			.setDescription(null)
+			.addFields([
+				{
+					name: 'Se acaba',
+					value: unixTimestamp ? `<t:${unixTimestamp}:R>` : 'Sin fecha',
+					inline: true,
+				},
+				{
+					name: 'Fecha límite',
+					value: unixTimestamp ? `<t:${unixTimestamp}:F>` : 'No especificada',
+					inline: true,
+				},
+				{
+					name: '\u200b',
+					value: '\u200b',
+					inline: true,
+				},
+				{
+					name: 'Materia',
+					value: dbItem.course,
+					inline: true,
+				},
+				{
+					name: 'Tipo',
+					value: dbItem.item_type,
+					inline: true,
+				},
+			]);
+	}
 };
 
 export const nothingForTodayEmbed = () => {
