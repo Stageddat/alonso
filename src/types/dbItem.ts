@@ -1,7 +1,7 @@
 export interface DbItem {
 	id: string;
 	title: string;
-	moodle_link: string;
+	moodle_link?: string;
 	notion_link: string;
 	users_completed?: string;
 	due_date: string;
