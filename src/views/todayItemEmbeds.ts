@@ -35,7 +35,7 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 	}
 
 	if (dbItem.moodle_link) {
-		if (dbItem.moodle_link?.startsWith('https://insbaixcamp.cat')) {
+		if (dbItem.moodle_link.startsWith('https://insbaixcamp.cat')) {
 			return new EmbedBuilder()
 				.setColor(color)
 				.setTitle(dbItem.title)
