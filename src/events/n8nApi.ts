@@ -19,6 +19,40 @@ const n8nApiEvent = {
 			return;
 		}
 
+		if (message.attachments.size > 0) {
+			const attachment = message.attachments.first();
+
+			if (attachment && attachment.name === 'file.txt') {
+				const response = await fetch(attachment.url);
+				const text = await response.text();
+				const items = JSON.parse(text) as Item[];
+
+				for (const item of items) {
+					const course = courses.find((c) => c.id === item.property_curso[0]);
+					const type = itemType.find((c) => c.id === item.property_tipo[0]);
+
+					if (!course || !type) continue;
+
+					const dbItem: DbItem = {
+						id: item.id,
+						title: item.name,
+						moodle_link: item.property_url,
+						notion_link: item.url,
+						users_completed: undefined,
+						due_date: normalizeToUTC(item.property_fecha_l_mite.start),
+						item_type: type.name,
+						course: course.name,
+					};
+
+					await ItemModel.addModifyItem({ item: dbItem });
+				}
+
+				await updateDailyMsg.updateDayMsg();
+				await message.reply('File processed correctly.');
+				return;
+			}
+		}
+
 		// Limpiar el texto
 		const clearText = message.content
 			.replace(/```(?:json)?/gi, '')
