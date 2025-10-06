@@ -4,7 +4,13 @@ import { ItemModel } from '@/models/itemModel';
 import { MsgIdsModel } from '@/models/msgModel';
 import { lastUpdatedEmbed, nothingForTodayEmbed, todayItemEmbed } from '@/views/todayItemEmbeds';
 import { client } from '@/index';
-import { EmbedBuilder, TextChannel } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	EmbedBuilder,
+	TextChannel,
+} from 'discord.js';
 import { DateTime } from 'luxon';
 import { dateStatus } from '@/enum/dateStatus';
 
@@ -57,6 +63,12 @@ export class updateDailyMsg {
 			embedList.push(nothingForTodayEmbed());
 		}
 		embedList.push(lastUpdatedEmbed());
+		const agendaLinkButton = new ButtonBuilder()
+			.setLabel('Agenda completa')
+			.setURL('https://agenda.stageddat.dev')
+			.setEmoji('📅')
+			.setStyle(ButtonStyle.Link);
+		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(agendaLinkButton);
 		// mirar si existe mensaje de hoy
 		const todayMsgId = await MsgIdsModel.getMsgIds();
 
@@ -101,6 +113,7 @@ export class updateDailyMsg {
 		).edit({
 			content: `# ${weekDay.charAt(0).toUpperCase() + weekDay.slice(1)}, ${formattedTodayDate}`,
 			embeds: embedList,
+			components: [row],
 		});
 	}
 }
