@@ -5,8 +5,10 @@ import { env } from './lib/env.js';
 import { loadEvents } from './handlers/handleEvents.js';
 import { Logger } from './lib/logger.js';
 import { statusQuotes } from './config/statusQuotes.js';
+import { agenda } from './lib/agenda.js';
 
 export const client = new CustomClient();
+await agenda.start();
 
 client.on(Events.InteractionCreate, (interaction) => {
 	void handleInteraction(interaction);
