@@ -34,6 +34,11 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 		Logger.debug('The item ', dbItem.title, ' due date unix timestamp is ', unixTimestamp);
 	}
 
+	// mirar si tiene link de moodle
+
+	// moodle --> moodle url
+	// link normal --> url
+	// no link --> sin link
 	if (dbItem.moodle_link) {
 		if (dbItem.moodle_link.startsWith('https://insbaixcamp.cat')) {
 			return new EmbedBuilder()
