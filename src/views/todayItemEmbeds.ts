@@ -150,6 +150,7 @@ export const todayItemEmbed = (dbItem: DbItem) => {
 	}
 };
 
+// embed de nada para hoy, foto de alonso chill
 export const nothingForTodayEmbed = () => {
 	return new EmbedBuilder()
 		.setColor(0x308446)
