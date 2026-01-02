@@ -163,5 +163,5 @@ export const lastUpdatedEmbed = () => {
 	return new EmbedBuilder()
 		.setColor(0x308446)
 		.setTitle(null)
-		.setDescription(`Última actualizacion el ` + new Date().toLocaleString());
+		.setDescription(`Última actualización el ` + new Date().toLocaleString());
 };
