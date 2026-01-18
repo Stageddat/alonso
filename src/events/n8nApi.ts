@@ -22,6 +22,7 @@ const n8nApiEvent = {
 		if (message.attachments.size > 0) {
 			const attachment = message.attachments.first();
 
+			// procesar archivo file.txt, ignorar otros a partir de ahora
 			if (attachment && attachment.name === 'file.txt') {
 				const response = await fetch(attachment.url);
 				const text = await response.text();
