@@ -64,7 +64,7 @@ export class updateDailyMsg {
 		}
 		embedList.push(lastUpdatedEmbed());
 		const agendaLinkButton = new ButtonBuilder()
-			.setLabel('Agenda completa')
+			.setLabel('Abrir agenda completa')
 			.setURL('https://agenda.stageddat.dev')
 			.setEmoji('📅')
 			.setStyle(ButtonStyle.Link);
